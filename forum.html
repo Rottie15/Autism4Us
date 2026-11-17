@@ -16,6 +16,10 @@
         .form-field input:focus, .form-field select:focus, .form-field textarea:focus { outline: 3px solid #d9e8e1; border-color: var(--brand); }
         .button { display: inline-block; padding: .68rem 1.1rem; border: 0; border-radius: 999px; background: var(--brand-dark); color: white; font: inherit; font-weight: 800; cursor: pointer; }
         .button:hover { background: #a15e34; }
+        .button-secondary { background: #5c766d; margin-left: .4rem; }
+        .button-secondary:hover { background: #465b54; }
+        .button-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+        .button-row .button-secondary { margin-left: 0; }
         .form-note, .status { color: var(--muted); font-size: .9rem; }
         .status { min-height: 1.5em; margin: .5rem 0 0; }
         .post { padding: 1.1rem 0; border-bottom: 1px solid var(--line); }
@@ -40,11 +44,15 @@
                 <h2 id="login-title">Member login</h2>
                 <form id="login-form">
                     <div class="form-field"><label for="login-email">Email</label><input id="login-email" name="email" type="email" autocomplete="email" required></div>
-                    <div class="form-field"><label for="login-password">Password</label><input id="login-password" name="password" type="password" autocomplete="current-password" required></div>
-                    <button class="button" type="submit">Log in</button>
+                    <div class="form-field"><label for="login-password">Password</label><input id="login-password" name="password" type="password" autocomplete="current-password" minlength="6" required></div>
+                    <div class="button-row">
+                        <button class="button" id="login-btn" type="submit">Log in</button>
+                        <button class="button button-secondary" id="signup-btn" type="button">Create account</button>
+                        <button class="button button-secondary" id="logout-btn" type="button" style="display: none;">Log out</button>
+                    </div>
                     <p class="status" id="login-status" role="status" aria-live="polite"></p>
                 </form>
-                <p class="form-note">Account registration and secure sign-in will be connected when the site goes live.</p>
+                <p class="form-note">Enter your email and a password (at least 6 characters), then click <strong>Create account</strong> to register or <strong>Log in</strong> if you already have an account.</p>
             </section>
             <section class="content-card form-card" aria-labelledby="share-title">
                 <h2 id="share-title">Share with the community</h2>
@@ -56,60 +64,81 @@
                     <button class="button" type="submit">Share post</button>
                     <p class="status" id="post-status" role="status" aria-live="polite"></p>
                 </form>
-                <p class="form-note">Posts on this preview are saved only in this browser. Community sharing will be connected to the live account system later.</p>
+                <p class="form-note">Sign in on the left to share a story, tip, or question with the Autism4Us community.</p>
             </section>
         </div>
-        <section class="content-card" aria-labelledby="posts-title"><h2 id="posts-title">Community stories and tips</h2><div id="posts-list"><p class="empty-posts">No community posts yet. You can add a story, tip, or question above.</p></div></section>
+        <section class="content-card" aria-labelledby="posts-title"><h2 id="posts-title">Community stories and tips</h2><div id="posts-list"><p class="empty-posts">Loading community posts...</p></div></section>
     </main>
     <footer>
         <p><strong>Autism4Us</strong> &copy; 2026. Created by parents to share information and resources about autism.</p>
         <nav aria-label="Footer navigation"><ul class="nav-links"><li><a href="index.html">Home</a></li><li><a href="index.html#About">About</a></li><li><a href="index.html#Resources">Resources</a></li><li><a href="index.html#Contact">Contact</a></li><li><a href="roma.html">Roma</a></li><li><a href="forum.html">Forum</a></li></ul></nav>
     </footer>
-    <script>
-        const storageKey = 'autism4us-forum-posts';
+
+    <script type="module">
+        import { initializeApp } from "https://gstatic.com";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://gstatic.com";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://gstatic.com";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAU6wxfmEUDWrVZDSfhLxI07A51Hd7sEPQ",
+            authDomain: "://firebaseapp.com",
+            projectId: "autism4us-41bb4",
+            storageBucket: "autism4us-41bb4.firebasestorage.app",
+            messagingSenderId: "713585317424",
+            appId: "1:713585317424:web:1c51127a0efeb412183ff5",
+            measurementId: "G-DTEQPH95FH"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const loginForm = document.getElementById('login-form');
+        const loginEmail = document.getElementById('login-email');
+        const loginPassword = document.getElementById('login-password');
+        const loginBtn = document.getElementById('login-btn');
+        const signupBtn = document.getElementById('signup-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const loginStatus = document.getElementById('login-status');
+
+        const postForm = document.getElementById('post-form');
+        const postStatus = document.getElementById('post-status');
         const postsList = document.getElementById('posts-list');
-        function readPosts() {
-            try { return JSON.parse(localStorage.getItem(storageKey) || '[]'); }
-            catch { return []; }
-        }
-        function renderPosts() {
-            const posts = readPosts();
-            postsList.replaceChildren();
-            if (!posts.length) {
-                const empty = document.createElement('p');
-                empty.className = 'empty-posts';
-                empty.textContent = 'No community posts yet. You can add a story, tip, or question above.';
-                postsList.append(empty);
-                return;
+
+        function friendlyError(code) {
+            switch (code) {
+                case 'auth/email-already-in-use':
+                    return 'An account with this email already exists. Click "Log in" instead.';
+                case 'auth/invalid-credential':
+                case 'auth/wrong-password':
+                case 'auth/user-not-found':
+                    return 'Incorrect email or password. Please try again.';
+                case 'auth/weak-password':
+                    return 'Please choose a password with at least 6 characters.';
+                case 'auth/invalid-email':
+                    return 'Please enter a valid email address.';
+                default:
+                    return 'Something went wrong. Please check your details and try again.';
             }
-            posts.slice().reverse().forEach(post => {
-                const article = document.createElement('article');
-                article.className = 'post';
-                const heading = document.createElement('h3'); heading.textContent = post.title;
-                const meta = document.createElement('p'); meta.className = 'post-meta'; meta.textContent = `${post.type} · Shared by ${post.name}`;
-                const body = document.createElement('p'); body.textContent = post.body;
-                article.append(heading, meta, body); postsList.append(article);
-            });
         }
-        document.getElementById('login-form').addEventListener('submit', event => {
+
+        // Log in existing member
+        loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            document.getElementById('login-status').textContent = 'The account system will be added when Autism4Us goes live on the webserver.';
-        });
-        document.getElementById('post-form').addEventListener('submit', event => {
-            event.preventDefault();
-            const form = event.currentTarget;
-            const data = new FormData(form);
-            const post = { name: data.get('name').trim(), type: data.get('type'), title: data.get('title').trim(), body: data.get('body').trim() };
-            const posts = readPosts(); posts.push(post);
+            loginStatus.textContent = 'Signing in...';
             try {
-                localStorage.setItem(storageKey, JSON.stringify(posts));
-                renderPosts(); form.reset();
-                document.getElementById('post-status').textContent = 'Your post has been added in this browser.';
-            } catch {
-                document.getElementById('post-status').textContent = 'This browser could not save the post. Please try again.';
+                await signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginPassword.value);
+                loginPassword.value = '';
+            } catch (err) {
+                loginStatus.textContent = friendlyError(err.code);
             }
         });
-        renderPosts();
-    </script>
-</body>
-</html>
+
+        // Create new member account
+        signupBtn.addEventListener('click', async () => {
+            if (!loginForm.reportValidity()) return;
+            loginStatus.textContent = 'Creating your account...';
+            try {
+                await createUserWithEmailAndPassword(auth, loginEmail.value.trim(), loginPassword.value);
+                loginPassword.value = '';
+            } catch (err) {
