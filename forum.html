@@ -29,225 +29,292 @@
         .post-meta { margin-bottom: .45rem; color: var(--muted); font-size: .83rem; }
         .post p:last-child { margin-bottom: 0; }
         .empty-posts { color: var(--muted); font-style: italic; }
+        .form-card hr { border: 0; border-top: 1px solid var(--line); margin: 1.4rem 0; }
+        .form-card h3 { color: var(--brand-dark); }
         @media (max-width: 700px) { .forum-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <header class="site-header"><a class="banner" href="index.html" aria-label="Autism4Us home"><img src="./Images/Autism4Us_Banner.png" alt="Autism4Us — Helping people to understand Autism"></a></header>
-    <nav class="site-nav" aria-label="Main navigation"><ul class="nav-links">
-        <li><a href="index.html">Home</a></li><li><a href="index.html#About">About</a></li><li><a href="index.html#Resources">Resources</a></li><li><a href="index.html#Contact">Contact</a></li><li><a href="roma.html">Roma</a></li><li><a href="forum.html" aria-current="page">Forum</a></li>
-    </ul></nav>
-    <header class="hero"><p class="eyebrow">Autism4Us community</p><h1>Forum</h1><p>A welcoming space to share stories, experiences, and helpful tips with other families.</p></header>
-    <main>
-        <div class="forum-grid">
-            <section class="content-card form-card" aria-labelledby="login-title">
-                <h2 id="login-title">Member login</h2>
+<header class="site-header"><a class="banner" href="index.html" aria-label="Autism4Us home"><img src="./Images/Autism4Us_Banner.png" alt="Autism4Us — Helping people to understand Autism"></a></header>
+<nav class="site-nav" aria-label="Main navigation"><ul class="nav-links">
+    <li><a href="index.html">Home</a></li><li><a href="index.html#About">About</a></li><li><a href="index.html#Resources">Resources</a></li><li><a href="index.html#Contact">Contact</a></li><li><a href="roma.html">Roma</a></li><li><a href="forum.html" aria-current="page">Forum</a></li>
+</ul></nav>
+<header class="hero"><p class="eyebrow">Autism4Us community</p><h1>Forum</h1><p>A welcoming space to share stories, experiences, and helpful tips with other families.</p></header>
+
+<main>
+    <div class="forum-grid">
+        <section class="content-card form-card" aria-labelledby="member-title">
+            <h2 id="member-title">Member registration &amp; login</h2>
+            <div id="account-status" class="status" role="status" aria-live="polite">You are not signed in.</div>
+            <button class="button button-secondary" id="logout-btn" type="button" hidden>Log out</button>
+            <div id="account-forms">
+                <h3>Create your account</h3>
+                <p class="form-note">Join the Autism4Us community by completing your details below.</p>
+                <form id="registration-form">
+                    <div class="form-field"><label for="register-first-name">First name</label><input id="register-first-name" name="firstName" type="text" maxlength="60" autocomplete="given-name" required></div>
+                    <div class="form-field"><label for="register-surname">Surname</label><input id="register-surname" name="surname" type="text" maxlength="60" autocomplete="family-name" required></div>
+                    <div class="form-field"><label for="register-display-name">Display name</label><input id="register-display-name" name="displayName" type="text" maxlength="40" autocomplete="nickname" required><small class="form-note">This name will appear beside your community posts.</small></div>
+                    <div class="form-field"><label for="register-email">Email</label><input id="register-email" name="email" type="email" maxlength="254" autocomplete="email" required></div>
+                    <div class="form-field"><label for="register-phone">Contact number</label><input id="register-phone" name="phone" type="tel" maxlength="25" autocomplete="tel" placeholder="e.g. +27 82 123 4567" required></div>
+                    <div class="form-field"><label for="register-password">Password</label><input id="register-password" name="password" type="password" minlength="8" autocomplete="new-password" required><small class="form-note">At least 8 characters.</small></div>
+                    <div class="form-field"><label for="register-confirm-password">Confirm password</label><input id="register-confirm-password" name="confirmPassword" type="password" minlength="8" autocomplete="new-password" required></div>
+                    <button class="button" id="register-btn" type="submit">Create account</button>
+                    <p class="status" id="register-status" role="status" aria-live="polite"></p>
+                </form>
+                <hr>
+                <h3>Already a member? Log in</h3>
                 <form id="login-form">
                     <div class="form-field"><label for="login-email">Email</label><input id="login-email" name="email" type="email" autocomplete="email" required></div>
-                    <div class="form-field"><label for="login-password">Password</label><input id="login-password" name="password" type="password" autocomplete="current-password" minlength="6" required></div>
-                    <div class="button-row">
-                        <button class="button" id="login-btn" type="submit">Log in</button>
-                        <button class="button button-secondary" id="signup-btn" type="button">Create account</button>
-                        <button class="button button-secondary" id="logout-btn" type="button" style="display: none;">Log out</button>
-                    </div>
+                    <div class="form-field"><label for="login-password">Password</label><input id="login-password" name="password" type="password" autocomplete="current-password" required></div>
+                    <div class="button-row"><button class="button" id="login-btn" type="submit">Log in</button></div>
                     <p class="status" id="login-status" role="status" aria-live="polite"></p>
                 </form>
-                <p class="form-note">Enter your email and a password (at least 6 characters), then click <strong>Create account</strong> to register or <strong>Log in</strong> if you already have an account.</p>
-            </section>
-            <section class="content-card form-card" aria-labelledby="share-title">
-                <h2 id="share-title">Share with the community</h2>
-                <form id="post-form">
-                    <div class="form-field"><label for="post-name">Your name</label><input id="post-name" name="name" maxlength="60" autocomplete="name" required></div>
-                    <div class="form-field"><label for="post-type">What would you like to share?</label><select id="post-type" name="type"><option>Story</option><option>Tip</option><option>Question</option></select></div>
-                    <div class="form-field"><label for="post-title">Title</label><input id="post-title" name="title" maxlength="100" required></div>
-                    <div class="form-field"><label for="post-body">Your story, tip, or question</label><textarea id="post-body" name="body" maxlength="3000" required></textarea></div>
-                    <button class="button" type="submit">Share post</button>
-                    <p class="status" id="post-status" role="status" aria-live="polite"></p>
-                </form>
-                <p class="form-note">Sign in on the left to share a story, tip, or question with the Autism4Us community.</p>
-            </section>
-        </div>
-        <section class="content-card" aria-labelledby="posts-title"><h2 id="posts-title">Community stories and tips</h2><div id="posts-list"><p class="empty-posts">Loading community posts...</p></div></section>
-    </main>
-    <footer>
-        <p><strong>Autism4Us</strong> &copy; 2026. Created by parents to share information and resources about autism.</p>
-        <nav aria-label="Footer navigation"><ul class="nav-links"><li><a href="index.html">Home</a></li><li><a href="index.html#About">About</a></li><li><a href="index.html#Resources">Resources</a></li><li><a href="index.html#Contact">Contact</a></li><li><a href="roma.html">Roma</a></li><li><a href="forum.html">Forum</a></li></ul></nav>
-    </footer>
+            </div>
+        </section>
 
-    <script type="module">
-        import { initializeApp } from "https://gstatic.com";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://gstatic.com";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://gstatic.com";
+        <section class="content-card form-card" aria-labelledby="share-title">
+            <h2 id="share-title">Share with the community</h2>
+            <form id="post-form">
+                <div class="form-field"><label for="post-name">Display name</label><input id="post-name" name="name" maxlength="40" readonly required></div>
+                <div class="form-field"><label for="post-type">What would you like to share?</label><select id="post-type" name="type"><option>Story</option><option>Tip</option><option>Question</option></select></div>
+                <div class="form-field"><label for="post-title">Title</label><input id="post-title" name="title" maxlength="100" required></div>
+                <div class="form-field"><label for="post-body">Your story, tip, or question</label><textarea id="post-body" name="body" maxlength="3000" required></textarea></div>
+                <button class="button" id="post-btn" type="submit" disabled>Share post</button>
+                <p class="status" id="post-status" role="status" aria-live="polite">Please log in to share a post.</p>
+            </form>
+            <p class="form-note">Sign in to share a story, tip, or question with the Autism4Us community.</p>
+        </section>
+    </div>
+    <section class="content-card" aria-labelledby="posts-title"><h2 id="posts-title">Community stories and tips</h2><div id="posts-list"><p class="empty-posts">Loading community posts...</p></div></section>
+</main>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAU6wxfmEUDWrVZDSfhLxI07A51Hd7sEPQ",
-            authDomain: "autism4us-41bb4.firebaseapp.com",
-            projectId: "autism4us-41bb4",
-            storageBucket: "autism4us-41bb4.firebasestorage.app",
-            messagingSenderId: "713585317424",
-            appId: "1:713585317424:web:1c51127a0efeb412183ff5",
-            measurementId: "G-DTEQPH95FH"
+<footer>
+    <p><strong>Autism4Us</strong> &copy; 2026. Created by parents to share information and resources about autism.</p>
+    <nav aria-label="Footer navigation"><ul class="nav-links"><li><a href="index.html">Home</a></li><li><a href="index.html#About">About</a></li><li><a href="index.html#Resources">Resources</a></li><li><a href="index.html#Contact">Contact</a></li><li><a href="roma.html">Roma</a></li><li><a href="forum.html">Forum</a></li></ul></nav>
+</footer>
+
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+
+    const firebaseConfig = {
+        apiKey: 'AIzaSyAU6wxfmEUDWrVZDSfhLxI07A51Hd7sEPQ',
+        authDomain: 'autism4us-41bb4.firebaseapp.com',
+        projectId: 'autism4us-41bb4',
+        storageBucket: 'autism4us-41bb4.firebasestorage.app',
+        messagingSenderId: '713585317424',
+        appId: '1:713585317424:web:1c51127a0efeb412183ff5',
+        measurementId: 'G-DTEQPH95FH'
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const registrationForm = document.getElementById('registration-form');
+    const registerStatus = document.getElementById('register-status');
+    const registerBtn = document.getElementById('register-btn');
+    const loginForm = document.getElementById('login-form');
+    const loginStatus = document.getElementById('login-status');
+    const loginBtn = document.getElementById('login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const accountStatus = document.getElementById('account-status');
+    const accountForms = document.getElementById('account-forms');
+    const postForm = document.getElementById('post-form');
+    const postName = document.getElementById('post-name');
+    const postStatus = document.getElementById('post-status');
+    const postBtn = document.getElementById('post-btn');
+    const postsList = document.getElementById('posts-list');
+
+    function friendlyError(error) {
+        const messages = {
+            'auth/email-already-in-use': 'An account with this email already exists. Please log in instead.',
+            'auth/invalid-email': 'Please enter a valid email address.',
+            'auth/weak-password': 'Your password must contain at least 8 characters.',
+            'auth/invalid-credential': 'The email address or password is incorrect.',
+            'auth/user-disabled': 'This account has been disabled. Please contact the site administrator.',
+            'auth/too-many-requests': 'Too many attempts. Please wait a while and try again.',
+            'permission-denied': 'Firebase denied access. Please check the Firestore security rules.'
         };
+        return messages[error.code] || 'Something went wrong. Please try again. If the problem continues, contact the site administrator.';
+    }
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    registrationForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(registrationForm);
+        const firstName = String(data.get('firstName')).trim();
+        const surname = String(data.get('surname')).trim();
+        const displayName = String(data.get('displayName')).trim();
+        const email = String(data.get('email')).trim().toLowerCase();
+        const phone = String(data.get('phone')).trim();
+        const password = String(data.get('password'));
+        const confirmPassword = String(data.get('confirmPassword'));
 
-        const loginForm = document.getElementById('login-form');
-        const loginEmail = document.getElementById('login-email');
-        const loginPassword = document.getElementById('login-password');
-        const loginBtn = document.getElementById('login-btn');
-        const signupBtn = document.getElementById('signup-btn');
-        const logoutBtn = document.getElementById('logout-btn');
-        const loginStatus = document.getElementById('login-status');
-
-        const postForm = document.getElementById('post-form');
-        const postStatus = document.getElementById('post-status');
-        const postsList = document.getElementById('posts-list');
-
-        function friendlyError(code) {
-            switch (code) {
-                case 'auth/email-already-in-use':
-                    return 'An account with this email already exists. Click "Log in" instead.';
-                case 'auth/invalid-credential':
-                case 'auth/wrong-password':
-                case 'auth/user-not-found':
-                    return 'Incorrect email or password. Please try again.';
-                case 'auth/weak-password':
-                    return 'Please choose a password with at least 6 characters.';
-                case 'auth/invalid-email':
-                    return 'Please enter a valid email address.';
-                default:
-                    return 'Something went wrong. Please check your details and try again.';
-            }
+        if (password !== confirmPassword) {
+            registerStatus.textContent = 'The passwords do not match. Please check them and try again.';
+            return;
         }
-        
-        // Log in existing member
-        loginForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            loginStatus.textContent = 'Signing in...';
-            try {
-                await signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginPassword.value);
-                loginPassword.value = '';
-            } catch (err) {
-                loginStatus.textContent = friendlyError(err.code);
-            }
-        });
 
-        // Create new member account
-        signupBtn.addEventListener('click', async () => {
-            if (!loginForm.reportValidity()) return;
-            loginStatus.textContent = 'Creating your account...';
-            try {
-                await createUserWithEmailAndPassword(auth, loginEmail.value.trim(), loginPassword.value);
-                loginPassword.value = '';
-            } catch (err) {        // Create new member account
-        signupBtn.addEventListener('click', async () => {
-            if (!loginForm.reportValidity()) return;
-            loginStatus.textContent = 'Creating your account...';
-            try {
-                await createUserWithEmailAndPassword(auth, loginEmail.value.trim(), loginPassword.value);
-                loginPassword.value = '';
-            } catch (err) {
-                loginStatus.textContent = friendlyError(err.code);
-            }
-        });
-
-        // Log out
-        logoutBtn.addEventListener('click', async () => {
-            await signOut(auth);
-        });
-
-        // Update UI when auth state changes
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                loginStatus.textContent = `Signed in as ${user.email}`;
-                loginBtn.style.display = 'none';
-                signupBtn.style.display = 'none';
-                logoutBtn.style.display = 'inline-block';
-                loginEmail.disabled = true;
-                loginPassword.disabled = true;
-            } else {
-                loginStatus.textContent = '';
-                loginBtn.style.display = 'inline-block';
-                signupBtn.style.display = 'inline-block';
-                logoutBtn.style.display = 'none';
-                loginEmail.disabled = false;
-                loginPassword.disabled = false;
-            }
-        });
-
-        // Submit new post to Firestore
-        postForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            if (!auth.currentUser) {
-                postStatus.textContent = 'Please log in or create an account on the left before sharing a post.';
-                return;
-            }
-
-            const data = new FormData(postForm);
-            const name = data.get('name').trim();
-            const type = data.get('type');
-            const title = data.get('title').trim();
-            const body = data.get('body').trim();
-
-            postStatus.textContent = 'Sharing your post...';
-            try {
-                await addDoc(collection(db, 'posts'), {
-                    name,
-                    type,
-                    title,
-                    body,
-                    uid: auth.currentUser.uid,
-                    createdAt: serverTimestamp()
-                });
-                postForm.reset();
-                postStatus.textContent = 'Thank you! Your post has been shared with the community.';
-            } catch (err) {
-                postStatus.textContent = 'Could not save your post. Please make sure you are signed in and try again.';
-            }
-        });
-
-        // Render live posts from Firestore
-        const postsQuery = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
-        onSnapshot(postsQuery, (snapshot) => {
-            postsList.replaceChildren();
-            if (snapshot.empty) {
-                const empty = document.createElement('p');
-                empty.className = 'empty-posts';
-                empty.textContent = 'No community posts yet. You can add a story, tip, or question above.';
-                postsList.append(empty);
-                return;
-            }
-
-            snapshot.forEach((doc) => {
-                const post = doc.data();
-                const article = document.createElement('article');
-                article.className = 'post';
-
-                const heading = document.createElement('h3');
-                heading.textContent = post.title;
-
-                const meta = document.createElement('p');
-                meta.className = 'post-meta';
-                const dateStr = post.createdAt?.toDate
-                    ? ' · ' + post.createdAt.toDate().toLocaleDateString('en-ZA', { year: 'numeric', month: 'short', day: 'numeric' })
-                    : '';
-                meta.textContent = `${post.type} · Shared by ${post.name}${dateStr}`;
-
-                const body = document.createElement('p');
-                body.textContent = post.body;
-
-                article.append(heading, meta, body);
-                postsList.append(article);
+        registerBtn.disabled = true;
+        registerStatus.textContent = 'Creating your member account...';
+        let newUser = null;
+        try {
+            const credential = await createUserWithEmailAndPassword(auth, email, password);
+            newUser = credential.user;
+            await setDoc(doc(db, 'users', newUser.uid), {
+                firstName,
+                surname,
+                displayName,
+                email,
+                phone,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
             });
-        }, () => {
-            postsList.replaceChildren();
-            const errMsg = document.createElement('p');
-            errMsg.className = 'empty-posts';
-            errMsg.textContent = 'Unable to load community posts right now. Please refresh the page.';
-            postsList.append(errMsg);
+            registrationForm.reset();
+            registerStatus.textContent = 'Welcome to Autism4Us! Your account and member profile have been created.';
+        } catch (error) {
+            if (newUser) {
+                registerStatus.textContent = 'Your login account was created, but we could not save your profile details. Please contact the site administrator before trying to register again.';
+            } else {
+                registerStatus.textContent = friendlyError(error);
+            }
+        } finally {
+            registerBtn.disabled = false;
+        }
+    });
+
+    loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const email = document.getElementById('login-email').value.trim().toLowerCase();
+        const password = document.getElementById('login-password').value;
+        loginBtn.disabled = true;
+        loginStatus.textContent = 'Signing in...';
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            loginForm.reset();
+            loginStatus.textContent = '';
+        } catch (error) {
+            loginStatus.textContent = friendlyError(error);
+        } finally {
+            loginBtn.disabled = false;
+        }
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            accountStatus.textContent = friendlyError(error);
+        }
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            accountStatus.textContent = 'You are not signed in.';
+            logoutBtn.hidden = true;
+            accountForms.hidden = false;
+            postName.value = '';
+            postName.disabled = true;
+            postBtn.disabled = true;
+            postStatus.textContent = 'Please log in to share a post.';
+            return;
+        }
+
+        accountStatus.textContent = `Signed in as ${user.email}. Loading your member profile...`;
+        logoutBtn.hidden = false;
+        accountForms.hidden = true;
+        postBtn.disabled = true;
+        try {
+            const profileSnapshot = await getDoc(doc(db, 'users', user.uid));
+            if (!profileSnapshot.exists()) {
+                accountStatus.textContent = 'You are signed in, but your member profile could not be found. Please contact the site administrator.';
+                postStatus.textContent = 'Your member profile is missing, so posting is temporarily disabled.';
+                return;
+            }
+            const profile = profileSnapshot.data();
+            postName.value = profile.displayName || `${profile.firstName || ''} ${profile.surname || ''}`.trim();
+            postName.disabled = false;
+            postBtn.disabled = false;
+            accountStatus.textContent = `Welcome, ${postName.value}! You are signed in.`;
+            postStatus.textContent = 'Share a story, tip, or question with the community.';
+        } catch (error) {
+            accountStatus.textContent = friendlyError(error);
+            postStatus.textContent = 'Could not load your member profile. Please try signing out and back in.';
+        }
+    });
+
+    postForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const user = auth.currentUser;
+        if (!user) {
+            postStatus.textContent = 'Please log in before sharing a post.';
+            return;
+        }
+        const data = new FormData(postForm);
+        const title = String(data.get('title')).trim();
+        const body = String(data.get('body')).trim();
+        if (!title || !body || !postName.value) {
+            postStatus.textContent = 'Please complete your title and message before posting.';
+            return;
+        }
+        postBtn.disabled = true;
+        postStatus.textContent = 'Sharing your post...';
+        try {
+            const memberDisplayName = postName.value;
+            await addDoc(collection(db, 'posts'), {
+                name: memberDisplayName,
+                displayName: memberDisplayName,
+                type: data.get('type'),
+                title,
+                body,
+                uid: user.uid,
+                createdAt: serverTimestamp()
+            });
+            postForm.reset();
+            postName.value = memberDisplayName;
+            postStatus.textContent = 'Thank you! Your post has been shared with the community.';
+        } catch (error) {
+            postStatus.textContent = friendlyError(error);
+        } finally {
+            postBtn.disabled = false;
+        }
+    });
+
+    const postsQuery = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
+    onSnapshot(postsQuery, (snapshot) => {
+        postsList.replaceChildren();
+        if (snapshot.empty) {
+            const empty = document.createElement('p');
+            empty.className = 'empty-posts';
+            empty.textContent = 'No community posts yet. Be the first to share a story, tip, or question.';
+            postsList.append(empty);
+            return;
+        }
+        snapshot.forEach((postDoc) => {
+            const post = postDoc.data();
+            const article = document.createElement('article');
+            article.className = 'post';
+            const heading = document.createElement('h3');
+            heading.textContent = post.title || 'Community post';
+            const meta = document.createElement('p');
+            meta.className = 'post-meta';
+            const dateStr = post.createdAt?.toDate
+                ? ' · ' + post.createdAt.toDate().toLocaleDateString('en-ZA', { year: 'numeric', month: 'short', day: 'numeric' })
+                : '';
+            meta.textContent = `${post.type || 'Post'} · Shared by ${post.displayName || post.name || 'Community member'}${dateStr}`;
+            const body = document.createElement('p');
+            body.textContent = post.body || '';
+            article.append(heading, meta, body);
+            postsList.append(article);
         });
-    </script>
+    }, (error) => {
+        postsList.replaceChildren();
+        const message = document.createElement('p');
+        message.className = 'empty-posts';
+        message.textContent = friendlyError(error);
+        postsList.append(message);
+    });
+</script>
 </body>
 </html>
