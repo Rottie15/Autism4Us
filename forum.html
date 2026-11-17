@@ -81,7 +81,7 @@
 
         const firebaseConfig = {
             apiKey: "AIzaSyAU6wxfmEUDWrVZDSfhLxI07A51Hd7sEPQ",
-            authDomain: "://firebaseapp.com",
+            authDomain: "autism4us-41bb4.firebaseapp.com",
             projectId: "autism4us-41bb4",
             storageBucket: "autism4us-41bb4.firebasestorage.app",
             messagingSenderId: "713585317424",
@@ -121,7 +121,7 @@
                     return 'Something went wrong. Please check your details and try again.';
             }
         }
-
+        
         // Log in existing member
         loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
@@ -141,4 +141,113 @@
             try {
                 await createUserWithEmailAndPassword(auth, loginEmail.value.trim(), loginPassword.value);
                 loginPassword.value = '';
+            } catch (err) {        // Create new member account
+        signupBtn.addEventListener('click', async () => {
+            if (!loginForm.reportValidity()) return;
+            loginStatus.textContent = 'Creating your account...';
+            try {
+                await createUserWithEmailAndPassword(auth, loginEmail.value.trim(), loginPassword.value);
+                loginPassword.value = '';
             } catch (err) {
+                loginStatus.textContent = friendlyError(err.code);
+            }
+        });
+
+        // Log out
+        logoutBtn.addEventListener('click', async () => {
+            await signOut(auth);
+        });
+
+        // Update UI when auth state changes
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loginStatus.textContent = `Signed in as ${user.email}`;
+                loginBtn.style.display = 'none';
+                signupBtn.style.display = 'none';
+                logoutBtn.style.display = 'inline-block';
+                loginEmail.disabled = true;
+                loginPassword.disabled = true;
+            } else {
+                loginStatus.textContent = '';
+                loginBtn.style.display = 'inline-block';
+                signupBtn.style.display = 'inline-block';
+                logoutBtn.style.display = 'none';
+                loginEmail.disabled = false;
+                loginPassword.disabled = false;
+            }
+        });
+
+        // Submit new post to Firestore
+        postForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (!auth.currentUser) {
+                postStatus.textContent = 'Please log in or create an account on the left before sharing a post.';
+                return;
+            }
+
+            const data = new FormData(postForm);
+            const name = data.get('name').trim();
+            const type = data.get('type');
+            const title = data.get('title').trim();
+            const body = data.get('body').trim();
+
+            postStatus.textContent = 'Sharing your post...';
+            try {
+                await addDoc(collection(db, 'posts'), {
+                    name,
+                    type,
+                    title,
+                    body,
+                    uid: auth.currentUser.uid,
+                    createdAt: serverTimestamp()
+                });
+                postForm.reset();
+                postStatus.textContent = 'Thank you! Your post has been shared with the community.';
+            } catch (err) {
+                postStatus.textContent = 'Could not save your post. Please make sure you are signed in and try again.';
+            }
+        });
+
+        // Render live posts from Firestore
+        const postsQuery = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
+        onSnapshot(postsQuery, (snapshot) => {
+            postsList.replaceChildren();
+            if (snapshot.empty) {
+                const empty = document.createElement('p');
+                empty.className = 'empty-posts';
+                empty.textContent = 'No community posts yet. You can add a story, tip, or question above.';
+                postsList.append(empty);
+                return;
+            }
+
+            snapshot.forEach((doc) => {
+                const post = doc.data();
+                const article = document.createElement('article');
+                article.className = 'post';
+
+                const heading = document.createElement('h3');
+                heading.textContent = post.title;
+
+                const meta = document.createElement('p');
+                meta.className = 'post-meta';
+                const dateStr = post.createdAt?.toDate
+                    ? ' · ' + post.createdAt.toDate().toLocaleDateString('en-ZA', { year: 'numeric', month: 'short', day: 'numeric' })
+                    : '';
+                meta.textContent = `${post.type} · Shared by ${post.name}${dateStr}`;
+
+                const body = document.createElement('p');
+                body.textContent = post.body;
+
+                article.append(heading, meta, body);
+                postsList.append(article);
+            });
+        }, () => {
+            postsList.replaceChildren();
+            const errMsg = document.createElement('p');
+            errMsg.className = 'empty-posts';
+            errMsg.textContent = 'Unable to load community posts right now. Please refresh the page.';
+            postsList.append(errMsg);
+        });
+    </script>
+</body>
+</html>
