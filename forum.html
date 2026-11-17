@@ -107,10 +107,19 @@
     </main>
 
     <footer>
-        <p><strong>Autism4Us</strong> &copy; 2026. Created by parents to share information and resources about autism.</p>
-        <nav aria-label="Footer navigation"><ul class="nav-links"><li><a href="index.html">Home</a></li><li><a href="index.html#About">About</a></li><li><a href="index.html#Resources">Resources</a></li><li><a href="index.html#Contact">Contact</a></li><li><a href="roma.html">Roma</a></li><li><a href="forum.html">Forum</a></li></ul></nav>
+        <p><strong>Autism4Us</strong> &copy; 2026. Created by parents (<span class="brand-bold">Rodwann & Robynn</span>) to share information and resources about autism.</p>
+        <p class="disclaimer"><em>Disclaimer: Autism4Us provides general information and is not a substitute for professional medical, educational, or therapeutic advice. Every autistic child is different, so please do your own research and consult qualified professionals about your child’s individual needs.</em></p>
+        <nav aria-label="Footer navigation">
+            <ul class="nav-links">
+                <li><a href="#Home">Home</a></li>
+                <li><a href="#About">About</a></li>
+                <li><a href="#Resources">Resources</a></li>
+                <li><a href="#Contact">Contact</a></li>
+            <li><a href="roma.html">Roma</a></li>
+            <li><a href="forum.html">Forum</a></li>
+            </ul>
+        </nav>
     </footer>
-
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification, reload } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
