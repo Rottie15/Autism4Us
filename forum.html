@@ -138,6 +138,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const VERIFICATION_API_URL = 'https://vercel.app';
 
         const registrationForm = document.getElementById('registration-form');
         const registerStatus = document.getElementById('register-status');
@@ -177,6 +178,23 @@
             return messages[error.code] || 'Something went wrong. Please try again. If the problem continues, contact the site administrator.';
         }
 
+                async function sendPersonalizedVerificationEmail(user, firstName = 'Friend') {
+            const idToken = await user.getIdToken(true);
+            const response = await fetch(VERIFICATION_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                },
+                body: JSON.stringify({ firstName })
+            });
+
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.error || 'Could not send verification email via Autism4Us mail server.');
+            }
+        }
+
         registrationForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const data = new FormData(registrationForm);
@@ -202,7 +220,8 @@
                 createdUser = credential.user;
 
                 // Send the verification email immediately on first registration.
-                await sendEmailVerification(createdUser);
+                await sendPersonalizedVerificationEmail(createdUser, firstName || displayName || 'Friend');
+;
                 verificationEmailSent = true;
 
                 // Save the private member profile against the authenticated user's UID.
@@ -275,7 +294,15 @@
             resendVerificationBtn.disabled = true;
             accountStatus.textContent = 'Sending a new verification email...';
             try {
-                await sendEmailVerification(user);
+                let firstName = 'Friend';
+try {
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (snap.exists() && snap.data().firstName) {
+        firstName = snap.data().firstName;
+    }
+} catch (_) {}
+await sendPersonalizedVerificationEmail(user, firstName);
+;
                 accountStatus.textContent = 'A new verification email has been sent to ' + (user.email || 'your email address') + '. Check your inbox and spam folder.';
             } catch (error) {
                 accountStatus.textContent = friendlyError(error);
